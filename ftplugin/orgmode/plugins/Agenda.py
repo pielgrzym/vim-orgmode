@@ -6,7 +6,7 @@ import glob
 
 import vim
 
-from orgmode._vim import ORGMODE, get_bufnumber, get_bufname, echoe
+from orgmode._vim import ORGMODE, get_bufnumber, get_bufname, echoe, get_user_input
 from orgmode import settings
 from orgmode.keybinding import Keybinding, Plug, Command
 from orgmode.menu import Submenu, ActionEntry, add_cmd_mapping_menu
@@ -226,6 +226,8 @@ class Agenda(object):
 			loaded_agendafiles = cls._get_agendadocuments()
 		if not loaded_agendafiles:
 			return
+		if tag == "_INTERACTIVE_":
+			tag = get_user_input("Tag:")
 		raw_agenda = ORGMODE.agenda_manager.get_tagged_todo(loaded_agendafiles, tag)
 
 		cls.line2doc = {}
@@ -311,9 +313,16 @@ class Agenda(object):
 		"""
 		add_cmd_mapping_menu(
 			self,
+			name=u"OrgAgendaTaggedTodoInteractive",
+			function=u'%s ORGMODE.plugins[u"Agenda"].list_tagged_todos("_INTERACTIVE_")' % VIM_PY_CALL,
+			key_mapping=u'<localleader>cax',
+			menu_desrc=u'Agenda for all TODOs - with prompt'
+		)
+		add_cmd_mapping_menu(
+			self,
 			name=u"OrgAgendaTaggedTodo",
 			function=u'%s ORGMODE.plugins[u"Agenda"].list_tagged_todos("<args>")' % VIM_PY_CALL,
-			key_mapping=u'<localleader>cax',
+			key_mapping=u'<localleader>caX',
 			arguments=u'*',
 			menu_desrc=u'Agenda for all TODOs'
 		)
