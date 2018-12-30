@@ -211,6 +211,42 @@ class Agenda(object):
 			pass
 
 	@classmethod
+	def list_given_todos(cls, todo, current_buffer=False):
+		u""" List all todos in one buffer.
+
+		Args:
+			current_buffer (bool):
+				False: all agenda files
+				True: current org_file
+		"""
+		if current_buffer:
+			agenda_documents = vim.current.buffer.name
+			loaded_agendafiles = cls._load_agendafiles([agenda_documents])
+		else:
+			loaded_agendafiles = cls._get_agendadocuments()
+		if not loaded_agendafiles:
+			return
+		if todo == "_INTERACTIVE_":
+			todo = get_user_input("State:")
+		raw_agenda = ORGMODE.agenda_manager.get_given_todo(loaded_agendafiles, todo)
+
+		cls.line2doc = {}
+		# create buffer at bottom
+		cmd = [u'setlocal filetype=orgagenda']
+		cls._switch_to(u'AGENDA', cmd)
+
+		# format text of agenda
+		final_agenda = []
+		for i, h in enumerate(raw_agenda):
+			tmp = u"%s %s" % (h.todo, h.title)
+			final_agenda.append(tmp)
+			cls.line2doc[len(final_agenda)] = (get_bufname(h.document.bufnr), h.document.bufnr, h.start)
+
+		# show agenda
+		vim.current.buffer[:] = [u_encode(i) for i in final_agenda]
+		vim.command(u_encode(u'setlocal nomodifiable  conceallevel=2 concealcursor=nc'))
+
+	@classmethod
 	def list_tagged_todos(cls, tag, current_buffer=False):
 		u""" List all todos in one buffer.
 
@@ -311,6 +347,21 @@ class Agenda(object):
 
 		Key bindings and other initialization should be done here.
 		"""
+		add_cmd_mapping_menu(
+			self,
+			name=u"OrgAgendaGivenTodoInteractive",
+			function=u'%s ORGMODE.plugins[u"Agenda"].list_given_todos("_INTERACTIVE_")' % VIM_PY_CALL,
+			key_mapping=u'<localleader>cgx',
+			menu_desrc=u'Agenda for all TODOs - with prompt'
+		)
+		add_cmd_mapping_menu(
+			self,
+			name=u"OrgAgendaGivenTodo",
+			function=u'%s ORGMODE.plugins[u"Agenda"].list_given_todos("<args>")' % VIM_PY_CALL,
+			key_mapping=u'<localleader>cgX',
+			arguments=u'*',
+			menu_desrc=u'Agenda for all TODOs'
+		)
 		add_cmd_mapping_menu(
 			self,
 			name=u"OrgAgendaTaggedTodoInteractive",

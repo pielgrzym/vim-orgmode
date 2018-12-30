@@ -95,7 +95,17 @@ def contains_active_date(heading):
 	"""
 	return not(heading.active_date is None)
 
-def contains_any_tag(heading, tag):
+
+def contains_given_todo(heading, todo):
+	u"""
+
+	Returns:
+		bool: True if heading contains an active TODO.
+	"""
+	return heading.todo == todo
+
+
+def contains_given_tag(heading, tag):
 	if not hasattr(heading, 'tags'):
 		return False
 	return tag in heading.tags
