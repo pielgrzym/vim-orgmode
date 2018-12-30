@@ -111,3 +111,12 @@ def contains_given_tag(heading, tag):
 	return tag in heading.tags
 
 # vim: set noexpandtab:
+
+
+def contains_given_todo_tag(heading, todo, tag):
+	u"""
+
+	Returns:
+		bool: True if heading contains an active TODO.
+	"""
+	return ( heading.todo == todo ) and ( tag in heading.tags )

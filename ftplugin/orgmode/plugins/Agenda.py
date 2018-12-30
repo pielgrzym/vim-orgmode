@@ -211,7 +211,7 @@ class Agenda(object):
 			pass
 
 	@classmethod
-	def list_given_todos(cls, todo, current_buffer=False):
+	def list_filtered_todos(cls, query=None, current_buffer=False):
 		u""" List all todos in one buffer.
 
 		Args:
@@ -226,9 +226,16 @@ class Agenda(object):
 			loaded_agendafiles = cls._get_agendadocuments()
 		if not loaded_agendafiles:
 			return
-		if todo == "_INTERACTIVE_":
+		if query == "_INTERACTIVE_":
 			todo = get_user_input("State:")
-		raw_agenda = ORGMODE.agenda_manager.get_given_todo(loaded_agendafiles, todo)
+			tag = get_user_input("Tag:")
+		else:
+			qargs = query.split(",")
+			if len(qargs) != 2:
+				return
+			todo = qargs[0]
+			tag = qargs[1]
+		raw_agenda = ORGMODE.agenda_manager.get_filtered_todo(loaded_agendafiles, todo, tag)
 
 		cls.line2doc = {}
 		# create buffer at bottom
@@ -347,6 +354,21 @@ class Agenda(object):
 
 		Key bindings and other initialization should be done here.
 		"""
+		add_cmd_mapping_menu(
+			self,
+			name=u"OrgAgendaFilterTodoInteractive",
+			function=u'%s ORGMODE.plugins[u"Agenda"].list_filtered_todos("_INTERACTIVE_")' % VIM_PY_CALL,
+			key_mapping=u'<localleader>ccx',
+			menu_desrc=u'Agenda for all TODOs - with prompt'
+		)
+		add_cmd_mapping_menu(
+			self,
+			name=u"OrgAgendaFilterTodo",
+			function=u'%s ORGMODE.plugins[u"Agenda"].list_filtered_todos("<args>")' % VIM_PY_CALL,
+			key_mapping=u'<localleader>ccX',
+			arguments=u'*',
+			menu_desrc=u'Agenda for all TODOs'
+		)
 		add_cmd_mapping_menu(
 			self,
 			name=u"OrgAgendaGivenTodoInteractive",
