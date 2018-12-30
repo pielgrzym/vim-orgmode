@@ -27,7 +27,7 @@ import re
 from orgmode.py3compat.encode_compatibility import *
 
 # <2011-09-12 Mon>
-_DATE_REGEX = re.compile(r"<(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w>", re.UNICODE)
+_DATE_REGEX = re.compile(r"<(\d\d\d\d)-(\d\d)-(\d\d) \w\w\w>", re.UNICODE)
 # [2011-09-12 Mon]
 _DATE_PASSIVE_REGEX = re.compile(r"\[(\d\d\d\d)-(\d\d)-(\d\d) [A-Z]\w\w\]", re.UNICODE)
 
