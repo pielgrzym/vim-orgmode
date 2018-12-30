@@ -25,7 +25,7 @@ def register_menu(f):
 	return r
 
 
-def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
+def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc, arguments=u'0'):
 	u"""A helper function to create a vim command and keybinding and add these
 	to the menu for a given plugin.
 
@@ -36,7 +36,7 @@ def add_cmd_mapping_menu(plugin, name, function, key_mapping, menu_desrc):
 	:key_mapping: the keymapping to execute the command.
 	:menu_desrc: the text which appears in the menu.
 	"""
-	cmd = Command(name, function)
+	cmd = Command(name, function, arguments=arguments)
 	keybinding = Keybinding(key_mapping, Plug(name, cmd))
 
 	plugin.commands.append(cmd)

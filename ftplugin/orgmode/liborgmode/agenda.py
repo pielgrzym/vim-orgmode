@@ -16,6 +16,7 @@ from orgmode.liborgmode.agendafilter import filter_items
 from orgmode.liborgmode.agendafilter import is_within_week_and_active_todo
 from orgmode.liborgmode.agendafilter import contains_active_todo
 from orgmode.liborgmode.agendafilter import contains_active_date
+from orgmode.liborgmode.agendafilter import contains_any_tag
 
 
 class AgendaManager(object):
@@ -34,6 +35,20 @@ class AgendaManager(object):
 			# filter and return headings
 			filtered.extend(filter_items(document.all_headings(),
 								[contains_active_todo]))
+		return sorted(filtered)
+
+	def get_tagged_todo(self, documents, tag):
+		u"""
+		Get the todo agenda for the given documents (list of document).
+		"""
+		filtered = []
+		for document in iter(documents):
+			# filter and return headings
+			filtered.extend(filter_items(document.all_headings(),
+								[
+									contains_active_todo,
+									[contains_any_tag, tag]
+								]))
 		return sorted(filtered)
 
 	def get_next_week_and_active_todo(self, documents):
