@@ -231,10 +231,10 @@ class Agenda(object):
 			tag = get_user_input("Tag:")
 		else:
 			qargs = query.split(",")
-			if len(qargs) != 2:
+			if len(qargs) < 2:
 				return
-			todo = qargs[0]
-			tag = qargs[1]
+			todo = qargs.pop(0)
+			tag = qargs
 		raw_agenda = ORGMODE.agenda_manager.get_filtered_todo(loaded_agendafiles, todo, tag)
 
 		cls.line2doc = {}
@@ -271,7 +271,10 @@ class Agenda(object):
 			return
 		if tag == "_INTERACTIVE_":
 			tag = get_user_input("Tag:")
-		raw_agenda = ORGMODE.agenda_manager.get_tagged_todo(loaded_agendafiles, tag)
+		taglist = tag.split(",")
+		if len(taglist) < 1:
+			return
+		raw_agenda = ORGMODE.agenda_manager.get_tagged_todo(loaded_agendafiles, taglist)
 
 		cls.line2doc = {}
 		# create buffer at bottom

@@ -108,7 +108,7 @@ def contains_given_todo(heading, todo):
 def contains_given_tag(heading, tag):
 	if not hasattr(heading, 'tags'):
 		return False
-	return tag in heading.tags
+	return all(t in heading.tags for t in tag)
 
 # vim: set noexpandtab:
 
@@ -119,4 +119,4 @@ def contains_given_todo_tag(heading, todo, tag):
 	Returns:
 		bool: True if heading contains an active TODO.
 	"""
-	return ( heading.todo == todo ) and ( tag in heading.tags )
+	return ( heading.todo == todo ) and ( all(t in heading.tags for t in tag) )
